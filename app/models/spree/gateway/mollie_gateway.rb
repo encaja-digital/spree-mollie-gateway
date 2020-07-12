@@ -53,7 +53,7 @@ module Spree
 
     # Create Mollie order
     def process(money, source, gateway_options)
-      MollieLogger.debug("About to create payment for order #{gateway_options[:order_id]}")
+      EpaycoLogger.debug("About to create payment for order #{gateway_options[:order_id]}")
 
       begin
         # First of all, invalidate all previous Mollie orders to prevent multiple paid orders
@@ -62,7 +62,7 @@ module Spree
         # Create a new Mollie order and update the payment source
         order_params = prepare_order_params(money, source, gateway_options)
         mollie_order = ::Mollie::Order.create(order_params)
-        MollieLogger.debug("Mollie order #{mollie_order.id} created for Spree order #{gateway_options[:order_id]}")
+        EpaycoLogger.debug("Mollie order #{mollie_order.id} created for Spree order #{gateway_options[:order_id]}")
 
         source.status = mollie_order.status
         source.payment_id = mollie_order.id
@@ -70,7 +70,7 @@ module Spree
         source.save!
         ActiveMerchant::Billing::Response.new(true, 'Order created')
       rescue ::Mollie::Exception => e
-        MollieLogger.debug("Could not create payment for order #{gateway_options[:order_id]}: #{e.message}")
+        EpaycoLogger.debug("Could not create payment for order #{gateway_options[:order_id]}: #{e.message}")
         ActiveMerchant::Billing::Response.new(false, "Order could not be created: #{e.message}")
       end
     end
@@ -82,7 +82,7 @@ module Spree
         email: user.email,
         api_key: get_preference(:api_key)
       )
-      MollieLogger.debug("Created a Mollie Customer for Spree user with ID #{customer.id}")
+      EpaycoLogger.debug("Created a Mollie Customer for Spree user with ID #{customer.id}")
       customer
     end
 
@@ -93,7 +93,7 @@ module Spree
       reimbursement = options[:originator].try(:reimbursement)
       order_number = order.try(:number)
       order_currency = order.try(:currency)
-      MollieLogger.debug("Starting refund for order #{order_number}")
+      EpaycoLogger.debug("Starting refund for order #{order_number}")
 
       begin
         if reimbursement
@@ -115,10 +115,10 @@ module Spree
           )
         end
 
-        MollieLogger.debug("Successfully refunded #{order.display_total} for order #{order_number}")
+        EpaycoLogger.debug("Successfully refunded #{order.display_total} for order #{order_number}")
         ActiveMerchant::Billing::Response.new(true, 'Refund successful')
       rescue ::Mollie::Exception => e
-        MollieLogger.debug("Refund failed for order #{order_number}: #{e.message}")
+        EpaycoLogger.debug("Refund failed for order #{order_number}: #{e.message}")
         ActiveMerchant::Billing::Response.new(false, 'Refund unsuccessful')
       end
     end
@@ -132,7 +132,7 @@ module Spree
     end
 
     def cancel(mollie_order_id)
-      MollieLogger.debug("Starting cancellation for #{mollie_order_id}")
+      EpaycoLogger.debug("Starting cancellation for #{mollie_order_id}")
 
       begin
         mollie_order = ::Mollie::Order.get(
@@ -143,11 +143,11 @@ module Spree
           cancel_order!(mollie_order_id)
           ActiveMerchant::Billing::Response.new(true, 'Mollie order has been cancelled.')
         else
-          MollieLogger.debug("Spree order #{mollie_order_id} has been canceled, could not cancel Mollie order.")
+          EpaycoLogger.debug("Spree order #{mollie_order_id} has been canceled, could not cancel Mollie order.")
           ActiveMerchant::Billing::Response.new(true, 'Spree order has been canceled, could not cancel Mollie order.')
         end
       rescue ::Mollie::Exception => e
-        MollieLogger.debug("Order #{mollie_order_id} could not be canceled: #{e.message}")
+        EpaycoLogger.debug("Order #{mollie_order_id} could not be canceled: #{e.message}")
         ActiveMerchant::Billing::Response.new(false, 'Order cancellation unsuccessful.')
       end
     end
@@ -184,7 +184,7 @@ module Spree
         api_key: get_preference(:api_key)
       )
 
-      MollieLogger.debug("Checking Mollie order status for order #{mollie_order_id}. Its status is: #{mollie_order.status}")
+      EpaycoLogger.debug("Checking Mollie order status for order #{mollie_order_id}. Its status is: #{mollie_order.status}")
       update_by_mollie_status!(mollie_order, spree_payment)
     end
 
@@ -207,7 +207,7 @@ module Spree
         mollie_order_id,
         api_key: get_preference(:api_key)
       )
-      MollieLogger.debug("Canceled Mollie order #{mollie_order_id}")
+      EpaycoLogger.debug("Canceled Mollie order #{mollie_order_id}")
     end
 
     def invalidate_previous_orders(spree_order_id)
@@ -220,7 +220,7 @@ module Spree
           )
           cancel_order!(mollie_order_id) if order.cancelable?
         rescue ::Mollie::Exception => e
-          MollieLogger.debug("Failed to invalidate previous order: #{e.message}")
+          EpaycoLogger.debug("Failed to invalidate previous order: #{e.message}")
         end
       end
     end

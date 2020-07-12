@@ -13,7 +13,7 @@ module Spree
       def update
         case @mollie_order.status
         when 'created'
-          MollieLogger.debug('Mollie order has been created, no spree update has been taken to back this status')
+          EpaycoLogger.debug('Mollie order has been created, no spree update has been taken to back this status')
         when 'paid', 'completed'
           transition_to_paid!
           @spree_payment.source.update(status: @spree_payment.state)
@@ -27,7 +27,7 @@ module Spree
           transition_to_shipping!
           @spree_payment.source.update(status: @spree_payment.state)
         else
-          MollieLogger.debug("Unhandled Mollie payment state received: #{@mollie_order.status}. Therefore we did not update the payment state.")
+          EpaycoLogger.debug("Unhandled Mollie payment state received: #{@mollie_order.status}. Therefore we did not update the payment state.")
           unless @spree_payment.order.paid_or_authorized?
             @spree_payment.order.update_attributes(state: 'payment', completed_at: nil)
           end
@@ -40,37 +40,37 @@ module Spree
 
       def transition_to_paid!
         if @spree_payment.completed?
-          MollieLogger.debug('Payment is already completed. Not updating the payment status within Spree.')
+          EpaycoLogger.debug('Payment is already completed. Not updating the payment status within Spree.')
           return
         end
 
         # If order is already paid for, don't mark it as complete again.
         @spree_payment.complete!
-        MollieLogger.debug('Mollie order has been paid for.')
+        EpaycoLogger.debug('Mollie order has been paid for.')
         complete_order!
       end
 
       def transition_to_failed!
         @spree_payment.failure! unless @spree_payment.failed?
         @spree_payment.order.update(state: 'payment', completed_at: nil) unless @spree_payment.order.paid_or_authorized?
-        MollieLogger.debug("Mollie order is #{@mollie_order.status} and will be marked as failed")
+        EpaycoLogger.debug("Mollie order is #{@mollie_order.status} and will be marked as failed")
       end
 
       def transition_to_authorized!
         @spree_payment.pend! unless @spree_payment.pending?
-        MollieLogger.debug("Mollie order #{@mollie_order.id} has been authorized.")
+        EpaycoLogger.debug("Mollie order #{@mollie_order.id} has been authorized.")
         complete_order!
       end
 
       def transition_to_shipping!
-        MollieLogger.debug("Mollie order #{@mollie_order.id} is shipping, update to partial shipping.")
+        EpaycoLogger.debug("Mollie order #{@mollie_order.id} is shipping, update to partial shipping.")
       end
 
       def complete_order!
         return if @spree_payment.order.completed?
         @spree_payment.order.finalize!
         @spree_payment.order.update_attributes(state: 'complete', completed_at: Time.now)
-        MollieLogger.debug('Order will be finalized and order confirmation will be sent.')
+        EpaycoLogger.debug('Order will be finalized and order confirmation will be sent.')
       end
     end
   end

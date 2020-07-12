@@ -15,7 +15,7 @@ module Spree
     def create_mollie_shipment!
       mollie_order = order.mollie_order
       shipment = create_shipment(mollie_order.id, shippable_lines)
-      MollieLogger.debug("Created Mollie shipment #{shipment.id} for order #{order.number}")
+      EpaycoLogger.debug("Created Mollie shipment #{shipment.id} for order #{order.number}")
     end
 
     def shipping_costs(mollie_order)

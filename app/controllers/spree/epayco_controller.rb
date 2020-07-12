@@ -1,5 +1,5 @@
 module Spree
-  class MollieController < BaseController
+  class EpaycoController < BaseController
     skip_before_action :verify_authenticity_token, only: [:update_payment_status]
 
     # When the user is redirected from Mollie back to the shop, we can check the
@@ -11,7 +11,7 @@ module Spree
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
       mollie.update_payment_status payment
 
-      MollieLogger.debug("Redirect URL visited for order #{params[:order_number]}")
+      EpaycoLogger.debug("Redirect URL visited for order #{params[:order_number]}")
 
       order = order.reload
 
@@ -22,7 +22,7 @@ module Spree
     # Mollie might send us information about a transaction through the webhook.
     # We should update the payment state accordingly.
     def update_payment_status
-      MollieLogger.debug("Webhook called for Mollie order #{params[:id]}")
+      EpaycoLogger.debug("Webhook called for Mollie order #{params[:id]}")
 
       payment = Spree::MolliePaymentSource.find_by_payment_id(params[:id]).payments.first
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
