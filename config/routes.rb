@@ -1,7 +1,8 @@
 Spree::Core::Engine.routes.draw do
-  resource :mollie, only: [], controller: :mollie do
-    post 'update_payment_status/:order_number', action: :update_payment_status, as: 'mollie_update_payment_status'
-    get 'validate_payment/:order_number', action: :validate_payment, as: 'mollie_validate_payment'
+  resource :epayco, only: [], controller: :epayco do
+    post 'update_payment_status/:order_number', action: :update_payment_status, as: 'epayco_update_payment_status'
+    get 'validate_payment/:order_number', action: :validate_payment, as: 'epayco_validate_payment'
+    get 'redirect', action: :redirect_to_gateway, as: 'epayco_redirect'
   end
 
   namespace :api do

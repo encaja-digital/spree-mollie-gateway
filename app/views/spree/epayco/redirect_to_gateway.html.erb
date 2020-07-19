@@ -1,0 +1,38 @@
+<script type="text/javascript" src="https://checkout.epayco.co/checkout.js">   </script>
+<script>
+  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address) {
+    var handler = ePayco.checkout.configure({
+      key: key,
+      test: test
+    });
+
+    var data={
+      name: "Pago tienda virtual",
+      description: "Pago por 3 meses",
+      invoice: tx_uid,
+      currency: "cop",
+      amount: tx_amount,
+      tax_base: "0",
+      tax: "0",
+      country: "co",
+      lang: "es",
+      external: "true",
+      response: base_url + "/epayco/response",
+      confirmation: base_url + "/epayco/confirmation",
+      email_billing: mail,
+      name_billing: name,
+      address_billing: address
+    };
+    handler.open(data);
+  }
+  epaycoPack(
+    <%= Rails.env.production? ? false : true %>,
+    '<%= @api_key %>',
+    '<%= SecureRandom.hex(5) %>',
+    '50000',
+    'http://localhost:3000',
+    'oaamados@gmail.com',
+    'John Kane',
+    'Av 123 Springfild'
+  )
+</script>

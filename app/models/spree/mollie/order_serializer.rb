@@ -29,11 +29,11 @@ module Spree
             order_number: order_number
           },
           orderNumber: order_number,
-          redirectUrl: spree_routes.mollie_validate_payment_mollie_url(
+          redirectUrl: spree_routes.epayco_validate_payment_epayco_url(
             order_number: order_number,
             host: @gateway_preferences[:hostname]
           ),
-          webhookUrl: spree_routes.mollie_update_payment_status_mollie_url(
+          webhookUrl: spree_routes.epayco_update_payment_status_epayco_url(
             order_number: order_number,
             host: @gateway_preferences[:hostname]
           ),

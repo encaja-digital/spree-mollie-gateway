@@ -1,53 +1,9 @@
-<% prefix = "payment_source[#{payment_method.id}]" %>
+# TODO: fix ids or set correct rails hidden tag
+<% name = "payment_source[#{payment_method.id}][payment_method_name]" %>
+<% id = "payment_source_#{payment_method.id}_payment_method_name_creditcard" %>
+
 <input class="js-mollie-payment-method" type="hidden" value="creditcard"
 name="payment_source[4][payment_method_name]" id="payment_source_4_payment_method_name_creditcard">
-
-<!-- <ul class="list-group">
-  <% payment_method.available_methods_for_order(@order).each do |method| %>
-
-    <div class="radio list-group-item">
-
-      <label>
-        <%= radio_button(prefix, :payment_method_name, method.id, class: 'js-mollie-payment-method') %>
-        <%= image_tag(method.image['size1x']) %>
-        <%= method.description %>
-      </label>
-
-      <%= select_tag "#{prefix}[issuer]",
-                     options_for_select(method.issuers.collect {|p| [p['name'], p['id']]}),
-                     {
-                         class: 'form-control js-mollie-issuers mollie-issuer-list',
-                         disabled: true,
-                         prompt: t('mollie-gateway.issuers.select'),
-                         data: {method: method.id}
-                     } if method.issuers.present? %>
-    </div>
-  <% end %>
-</ul> -->
-
-<script type="text/javascript" charset="utf-8">
-    /**
-     * Make sure the issuer select boxes are disabled by default to prevent empty issuer submissions.
-     */
-    var paymentMethodRadioElements = document.querySelectorAll('.js-mollie-payment-method');
-
-    function disableAllIssuerSelectBoxes() {
-        var issuerSelectElements = document.querySelectorAll('.js-mollie-issuers');
-        for (var i = 0; i < issuerSelectElements.length; i++) {
-            issuerSelectElements[i].setAttribute('disabled', 'true');
-        }
-    }
-
-    for (var i = 0; i < paymentMethodRadioElements.length; i++) {
-        paymentMethodRadioElements[i].addEventListener('change', function (e) {
-            disableAllIssuerSelectBoxes();
-            var issuerSelect = document.querySelector('[data-method="' + e.target.value + '"]');
-            if (issuerSelect) {
-                issuerSelect.removeAttribute('disabled');
-            }
-        });
-    }
-</script>
 
 <style type="text/css">
   .mollie-issuer-list {

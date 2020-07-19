@@ -2,6 +2,12 @@ module Spree
   class EpaycoController < BaseController
     skip_before_action :verify_authenticity_token, only: [:update_payment_status]
 
+    def redirect_to_gateway
+      gateway = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
+      @api_key = gateway.get_preference(:api_key)
+    end
+
+
     # When the user is redirected from Mollie back to the shop, we can check the
     # mollie transaction status and set the Spree order state accordingly.
     def validate_payment
