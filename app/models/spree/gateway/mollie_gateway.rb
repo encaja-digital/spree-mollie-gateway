@@ -60,13 +60,14 @@ module Spree
         invalidate_previous_orders(gateway_options[:order].id)
 
         # Create a new Mollie order and update the payment source
-        order_params = prepare_order_params(money, source, gateway_options)
-        mollie_order = ::Mollie::Order.create(order_params)
-        EpaycoLogger.debug("Mollie order #{mollie_order.id} created for Spree order #{gateway_options[:order_id]}")
+        # order_params = prepare_order_params(money, source, gateway_options)
+        # mollie_order = ::Mollie::Order.create(order_params)
+        # EpaycoLogger.debug("Mollie order #{mollie_order.id} created for Spree order #{gateway_options[:order_id]}")
 
-        source.status = mollie_order.status
-        source.payment_id = mollie_order.id
-        source.payment_url = mollie_order.checkout_url
+        # TODO check numbers here
+        source.status = 'pending'
+        source.payment_id = SecureRandom.hex(5)
+        source.payment_url = 'http://www.google.com'
         source.save!
         ActiveMerchant::Billing::Response.new(true, 'Order created')
       rescue ::Mollie::Exception => e
@@ -212,16 +213,7 @@ module Spree
 
     def invalidate_previous_orders(spree_order_id)
       Spree::Payment.where(order_id: spree_order_id, state: 'processing').each do |payment|
-        begin
-          mollie_order_id = payment.source.payment_id
-          order = ::Mollie::Order.get(
-            mollie_order_id,
-            api_key: get_preference(:api_key)
-          )
-          cancel_order!(mollie_order_id) if order.cancelable?
-        rescue ::Mollie::Exception => e
-          EpaycoLogger.debug("Failed to invalidate previous order: #{e.message}")
-        end
+        # TODO: update state on db
       end
     end
   end

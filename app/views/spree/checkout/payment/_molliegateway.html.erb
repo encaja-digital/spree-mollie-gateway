@@ -1,16 +1,6 @@
-# TODO: fix ids or set correct rails hidden tag
+<!--  TODO: fix ids or set correct rails hidden tag -->
 <% name = "payment_source[#{payment_method.id}][payment_method_name]" %>
 <% id = "payment_source_#{payment_method.id}_payment_method_name_creditcard" %>
 
 <input class="js-mollie-payment-method" type="hidden" value="creditcard"
 name="payment_source[4][payment_method_name]" id="payment_source_4_payment_method_name_creditcard">
-
-<style type="text/css">
-  .mollie-issuer-list {
-    margin-top: 15px;
-  }
-
-  .mollie-issuer-list[disabled] {
-    display: none;
-  }
-</style>

@@ -4,7 +4,6 @@ module Spree
     def update
       EpaycoLogger.debug("payment_params_valid? #{payment_params_valid?} && paying_with_mollie? #{payment_params_valid? && paying_with_mollie?}")
       if payment_params_valid? && paying_with_mollie?
-        byebug
         if @order.update_from_params(params, permitted_checkout_attributes, request.headers.env)
           payment = @order.payments.last
           payment.process!

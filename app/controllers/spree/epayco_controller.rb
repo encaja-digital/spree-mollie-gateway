@@ -3,6 +3,7 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:update_payment_status]
 
     def redirect_to_gateway
+      byebug
       gateway = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
       @api_key = gateway.get_preference(:api_key)
     end
