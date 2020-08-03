@@ -23,7 +23,10 @@
       name_billing: name,
       address_billing: address
     };
-    handler.open(data);
+    console.log(data);
+
+    setTimeout(() => {  handler.open(data);; }, 30000);
+    // handler.open(data);
   }
   epaycoPack(
     <%= Rails.env.production? ? false : true %>,
