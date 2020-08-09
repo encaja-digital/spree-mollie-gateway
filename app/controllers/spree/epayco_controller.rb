@@ -21,12 +21,13 @@ module Spree
     # When the user is redirected from Mollie back to the shop, we can check the
     # mollie transaction status and set the Spree order state accordingly.
     def validate_payment
-      order_number, payment_number = split_payment_identifier params[:order_number]
-      payment = Spree::Payment.find_by_number payment_number
-      order = Spree::Order.find_by_number order_number
+      order_number, payment_number = split_payment_identifier params[:payment_number]
+      payment = Spree::Payment.find_by_number params[:payment_number]
+      order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
-      mollie.update_payment_status payment
-
+      # mollie.update_payment_status payment
+      # TODO check status and update based on payloads
+       
       EpaycoLogger.debug("Redirect URL visited for order #{params[:order_number]}")
 
       order = order.reload
