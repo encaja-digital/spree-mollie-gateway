@@ -11,7 +11,8 @@ module Spree
 
           EpaycoLogger.debug("For order #{@order.number} redirect user to payment URL: #{mollie_payment_url}")
 
-          redirect_to epayco_redirect_epayco_path
+          # TODO send payment and order
+          redirect_to epayco_redirect_epayco_path(payment_id: payment.id)
         else
           render :edit
         end

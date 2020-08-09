@@ -6,6 +6,13 @@ module Spree
       byebug
       gateway = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
       @api_key = gateway.get_preference(:api_key)
+      @price
+      @email = order.email
+      @name
+      @billing_address =
+      @base_url_webhook =
+      @tx_id =
+      # TODO taxes and description
     end
 
 

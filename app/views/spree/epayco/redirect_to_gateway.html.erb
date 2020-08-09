@@ -32,10 +32,10 @@
     <%= Rails.env.production? ? false : true %>,
     '<%= @api_key %>',
     '<%= SecureRandom.hex(5) %>',
-    '50000',
-    'http://localhost:3000',
-    'oaamados@gmail.com',
-    'John Kane',
-    'Av 123 Springfild'
+    '<%= @price %>',
+    '<%= @base_url_webhook %>',
+    '<%= @email %>',
+    '<%= @name %>',
+    '<%= @billing_address %>'
   )
 </script>
