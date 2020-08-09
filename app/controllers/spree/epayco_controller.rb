@@ -10,7 +10,7 @@ module Spree
       @api_key = gateway.get_preference(:api_key)
       @price = order.total
       @email = order.email
-      @name = order.billing_address.fullname
+      @name = order.billing_address.full_name
       @billing_address = parse_address(order.billing_address)
       @base_url_webhook = gateway.get_preference(:hostname)
       @tx_id = params[:payment_number]
