@@ -3,15 +3,17 @@ module Spree
     skip_before_action :verify_authenticity_token, only: [:update_payment_status]
 
     def redirect_to_gateway
+      payment = Spree::Payment.find_by_number params[:payment_number]
+      order = payment.order
       byebug
       gateway = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
       @api_key = gateway.get_preference(:api_key)
-      @price
+      @price = order.total
       @email = order.email
-      @name
-      @billing_address =
-      @base_url_webhook =
-      @tx_id =
+      @name = order.billing_address.fullname
+      @billing_address = parse_address(order.billing_address)
+      @base_url_webhook = gateway.get_preference(:hostname)
+      @tx_id = params[:payment_number]
       # TODO taxes and description
     end
 
@@ -51,5 +53,15 @@ module Spree
     def split_payment_identifier(payment_identifier)
       payment_identifier.split '-'
     end
+
+    def parse_address(address)
+      [
+       address.address1,
+       address.address2,
+       "#{address.city}, #{address.state_text} #{address.zipcode}",
+       address.country.to_s
+      ].reject(&:blank?).map { |attribute| ERB::Util.html_escape(attribute) }.join('. ')
+    end
+
   end
 end
