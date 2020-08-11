@@ -22,7 +22,7 @@ module Spree
     # mollie transaction status and set the Spree order state accordingly.
     def validate_payment
       byebug
-      order_number, payment_number = split_payment_identifier params[:payment_number]
+      #order_number, payment_number = split_payment_identifier params[:payment_number]
       payment = Spree::Payment.find_by_number params[:payment_number]
       order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
