@@ -1,6 +1,6 @@
 <script type="text/javascript" src="https://checkout.epayco.co/checkout.js">   </script>
 <script>
-  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address) {
+  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address, tax_value, order_description) {
     var handler = ePayco.checkout.configure({
       key: key,
       test: test
@@ -8,12 +8,12 @@
 
     var data={
       name: "Pago tienda virtual",
-      description: "Pago por 3 meses",
+      description: order_description,
       invoice: tx_uid,
       currency: "cop",
       amount: tx_amount,
       tax_base: "0",
-      tax: "0",
+      tax: tax_value,
       country: "co",
       lang: "es",
       external: "true",
@@ -36,6 +36,8 @@
     '<%= @base_url_webhook %>',
     '<%= @email %>',
     '<%= @name %>',
-    '<%= @billing_address %>'
+    '<%= @billing_address %>',
+    '<%= @tax_amount %>',
+    '<%= @description %>'
   )
 </script>

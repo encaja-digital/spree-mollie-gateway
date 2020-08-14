@@ -14,6 +14,9 @@ module Spree
       @billing_address = parse_address(order.billing_address)
       @base_url_webhook = gateway.get_preference(:hostname)
       @tx_id = params[:payment_number]
+      #spree_tax_rates, amount
+      @tax_amount = order.tax
+      @description = order.store.name
       # TODO taxes and description
     end
 
@@ -22,7 +25,7 @@ module Spree
     # mollie transaction status and set the Spree order state accordingly.
     def validate_payment
       byebug
-      #order_number, payment_number = split_payment_identifier params[:payment_number]
+      order_number, payment_number = split_payment_identifier params[:payment_number]
       payment = Spree::Payment.find_by_number params[:payment_number]
       order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
