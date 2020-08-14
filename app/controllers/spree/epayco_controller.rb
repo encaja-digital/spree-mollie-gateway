@@ -16,7 +16,8 @@ module Spree
       @tx_id = params[:payment_number]
       #spree_tax_rates, amount
       @tax_amount = order.included_tax_total
-      @description = order.store.name
+      @items = order.item_count
+      @store_name = order.store.name
       # TODO taxes and description
     end
 

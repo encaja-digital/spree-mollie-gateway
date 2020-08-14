@@ -1,14 +1,14 @@
 <script type="text/javascript" src="https://checkout.epayco.co/checkout.js">   </script>
 <script>
-  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address, tax_value, order_description) {
+  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address, tax_value, store_name, items) {
     var handler = ePayco.checkout.configure({
       key: key,
       test: test
     });
 
     var data={
-      name: "Pago tienda virtual",
-      description: order_description,
+      name: "Pago tienda virtual" + store_name,
+      description: "Compra" + items + "artículos en " + store_name,
       invoice: tx_uid,
       currency: "cop",
       amount: tx_amount,
@@ -38,6 +38,7 @@
     '<%= @name %>',
     '<%= @billing_address %>',
     '<%= @tax_amount %>',
-    '<%= @description %>'
+    '<%= @store_name %>',
+    '<%= @items %>'
   )
 </script>
