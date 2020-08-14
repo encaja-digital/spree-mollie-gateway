@@ -15,7 +15,7 @@ module Spree
       @base_url_webhook = gateway.get_preference(:hostname)
       @tx_id = params[:payment_number]
       #spree_tax_rates, amount
-      @tax_amount = order.tax
+      @tax_amount = order.included_tax_total
       @description = order.store.name
       # TODO taxes and description
     end
