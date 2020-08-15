@@ -27,11 +27,11 @@ module Spree
       puts "currently on validate_payment"
       byebug
       #order_number, payment_number = split_payment_identifier params[:payment_number]
-      #payment = Spree::Payment.find_by_number params[:payment_number]
-      payment = Spree::Payment.find_by_number params[:order_number]
+      payment = Spree::Payment.find_by_number params[:payment_number]
+      #payment = Spree::Payment.find_by_number params[:order_number]
       order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
-      mollie.update_payment_status
+      mollie.update_payment_status payment
       # TODO check status and update based on payloads
 
       EpaycoLogger.debug("Redirect URL visited for order #{params[:order_number]}")
