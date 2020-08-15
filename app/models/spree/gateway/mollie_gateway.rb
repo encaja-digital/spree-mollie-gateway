@@ -180,11 +180,13 @@ module Spree
     def update_payment_status(spree_payment)
       byebug
       mollie_order_id = spree_payment.source.payment_id
-      mollie_order = ::Mollie::Order.get(
-        mollie_order_id,
-        embed: 'payments',
-        api_key: get_preference(:api_key)
-      )
+      # mollie_order = ::Mollie::Order.get(
+      #   mollie_order_id,
+      #   embed: 'payments',
+      #   api_key: get_preference(:api_key)
+      # )
+
+      mollie_order_id = spree_payment.order
 
       EpaycoLogger.debug("Checking Mollie order status for order #{mollie_order_id}. Its status is: #{mollie_order.status}")
       update_by_mollie_status!(mollie_order, spree_payment)
