@@ -8,22 +8,16 @@ module Spree
       byebug
       gateway = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
       @api_key = gateway.get_preference(:api_key)
-      @price = order.total
-      @price2 = order.item_total
-      @price3 = order.payment_total
+      #@price = order.total
+      @price = order.item_total
       @email = order.email
       @name = order.billing_address.full_name
       @billing_address = parse_address(order.billing_address)
       @base_url_webhook = gateway.get_preference(:hostname)
       @tx_id = params[:payment_number]
-      #spree_tax_rates, amount
-      @tax_amount1 = order.included_tax_total
-      @tax_amount2 = order.additional_tax_total
-      @tax_amount3 = order.taxable_adjustment_total
-      @tax_amount4 = order.non_taxable_adjustment_total
+      @tax_amount = order.additional_tax_total
       @items = order.item_count
       @store_name = order.store.name
-      # TODO taxes and description
     end
 
 
