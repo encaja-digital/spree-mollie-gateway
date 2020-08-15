@@ -1,6 +1,6 @@
 <script type="text/javascript" src="https://checkout.epayco.co/checkout.js">   </script>
 <script>
-  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address, tax_value, store_name, items) {
+  window.epaycoPack = function (test, key, tx_uid, tx_amount, base_url, mail, name, address, tax_value, base_value, store_name, items) {
     var handler = ePayco.checkout.configure({
       key: key,
       test: test
@@ -12,7 +12,7 @@
       invoice: tx_uid,
       currency: "cop",
       amount: tx_amount,
-      tax_base: "0",
+      tax_base: base_value,
       tax: tax_value,
       country: "co",
       lang: "es",
@@ -38,6 +38,7 @@
     '<%= @name %>',
     '<%= @billing_address %>',
     '<%= @tax_amount %>',
+    '<%= @tax_base %>',
     '<%= @store_name %>',
     '<%= @items %>'
   )
