@@ -28,9 +28,9 @@ module Spree
       byebug
       #order_number, payment_number = split_payment_identifier params[:payment_number]
       payment = Spree::Payment.find_by_number params[:payment_number]
-      order = payment.order
+      order = payment.order_number
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
-      # mollie.update_payment_status payment
+      mollie.update_payment_status payment
       # TODO check status and update based on payloads
 
       EpaycoLogger.debug("Redirect URL visited for order #{params[:order_number]}")
