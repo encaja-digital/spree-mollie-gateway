@@ -24,8 +24,8 @@ module Spree
     # When the user is redirected from Mollie back to the shop, we can check the
     # mollie transaction status and set the Spree order state accordingly.
     def validate_payment
-      puts "currently on validate_payment"
       byebug
+      result
       #order_number, payment_number = split_payment_identifier params[:payment_number]
       payment = Spree::Payment.find_by_number params[:payment_number]
       #payment = Spree::Payment.find_by_number params[:order_number]
@@ -56,6 +56,19 @@ module Spree
     end
 
     private
+
+    def result
+      url = "https://secure.epayco.co/validation/v1/reference/#{params[:ref_payco]}"
+      response = HTTParty.get(url)
+
+      parsed = JSON.parse(response.body)
+      if parsed['success']
+        @data = parsed['data']
+        @charge = TransactionLog.where(uid: @data['x_id_invoice']).take
+      else
+        @error = 'No se pudo consultar la información'
+      end
+    end
 
     # Payment identifier is a combination of order_number and payment_id.
     def split_payment_identifier(payment_identifier)
