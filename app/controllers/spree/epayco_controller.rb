@@ -29,7 +29,7 @@ module Spree
       #order_number, payment_number = split_payment_identifier params[:payment_number]
       #payment = Spree::Payment.find_by_number params[:payment_number]
       payment = Spree::Payment.find_by_number params[:order_number]
-      #order = payment.order_number
+      order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
       mollie.update_payment_status payment
       # TODO check status and update based on payloads
@@ -45,6 +45,7 @@ module Spree
     # Mollie might send us information about a transaction through the webhook.
     # We should update the payment state accordingly.
     def update_payment_status
+      byebug
       EpaycoLogger.debug("Webhook called for Mollie order #{params[:id]}")
 
       payment = Spree::MolliePaymentSource.find_by_payment_id(params[:id]).payments.first
