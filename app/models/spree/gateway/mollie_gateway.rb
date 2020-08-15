@@ -178,6 +178,7 @@ module Spree
     end
 
     def update_payment_status(spree_payment)
+      byebug
       mollie_order_id = spree_payment.source.payment_id
       mollie_order = ::Mollie::Order.get(
         mollie_order_id,
