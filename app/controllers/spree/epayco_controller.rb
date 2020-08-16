@@ -62,12 +62,12 @@ module Spree
 
     def update_status(charge, response)
       byebug
-      status = response[:x_cod_response]
-      if status == 1
+      #status = response[:x_cod_response]
+      if response[:x_cod_response] == 1
         charge.paid!
-      elsif status == 2 || status == 4
+      elsif response[:x_cod_response] == 2 || response[:x_cod_response] == 4
         charge.update!(status: :rejected, error_message: response[:x_response_reason_text])
-      elsif status == 3
+      elsif response[:x_cod_response] == 3
         charge.pending!
       else
         head :unprocessable_entity
