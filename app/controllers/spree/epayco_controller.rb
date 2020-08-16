@@ -32,7 +32,7 @@ module Spree
       response = result()
       signature = signature(response, mollie)
       ## TODO: check signature before update_status
-      update_status(order, response[:x_cod_response])
+      update_status(payment, response[:x_cod_response])
 
       if signature == response[:x_signature]
         update_status(order, response[:x_cod_response])
@@ -79,11 +79,12 @@ module Spree
       Digest::SHA256.hexdigest(msg)
     end
 
-    def update_status(charge, status)
+    def update_status(charge, response)
+      status = response[:x_cod_response]
       if status == "1"
         charge.paid!
       elsif status == "2" || status == "4"
-        charge.update!(status: :rejected, error_message: params[:x_response_reason_text])
+        charge.update!(status: :rejected, error_message: response[:x_response_reason_text])
       elsif status == "3"
         charge.pending!
       else
