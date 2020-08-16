@@ -60,6 +60,21 @@ module Spree
       head :ok
     end
 
+    def update_status(charge, response)
+      byebug
+      status = response[:x_cod_response]
+      if status == 1
+        charge.paid!
+      elsif status == 2 || status == 4
+        charge.update!(status: :rejected, error_message: response[:x_response_reason_text])
+      elsif status == 3
+        charge.pending!
+      else
+        head :unprocessable_entity
+        return
+      end
+    end
+
     private
 
     def result()
@@ -77,20 +92,6 @@ module Spree
     def signature(response, mollie)
       msg = "#{response[:x_cust_id_cliente]}^#{mollie.get_preference(:api_key)}^#{response[:x_ref_payco]}^#{response[:x_transaction_id]}^#{response[:x_amount]}^#{response[:x_currency_code]}"
       Digest::SHA256.hexdigest(msg)
-    end
-
-    def update_status(charge, response)
-      status = response[:x_cod_response]
-      if status == "1"
-        charge.paid!
-      elsif status == "2" || status == "4"
-        charge.update!(status: :rejected, error_message: response[:x_response_reason_text])
-      elsif status == "3"
-        charge.pending!
-      else
-        head :unprocessable_entity
-        return
-      end
     end
 
     # Payment identifier is a combination of order_number and payment_id.
