@@ -25,13 +25,25 @@ module Spree
     # mollie transaction status and set the Spree order state accordingly.
     def validate_payment
       byebug
-      result
-      #order_number, payment_number = split_payment_identifier params[:payment_number]
       payment = Spree::Payment.find_by_number params[:payment_number]
-      #payment = Spree::Payment.find_by_number params[:order_number]
       order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
-      mollie.update_payment_status payment
+
+      url = "https://secure.epayco.co/validation/v1/reference/#{params[:ref_payco]}"
+      response = HTTParty.get(url)
+      parsed = JSON.parse(response.body)
+
+      if parsed['success']
+        @data = parsed['data']
+        order = order.reload
+      else
+        @error = 'No se pudo consultar la información'
+      end
+
+
+
+
+      #mollie.update_payment_status payment
       # TODO check status and update based on payloads
 
       EpaycoLogger.debug("Redirect URL visited for order #{params[:order_number]}")
