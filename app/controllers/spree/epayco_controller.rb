@@ -29,23 +29,18 @@ module Spree
       order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
 
-      result
-      if signature == params[:x_signature]
-        update_status(order, params[:x_cod_response])
+      response = result()
+      signature
+      if signature == response[:x_signature]
+        update_status(order, response[:x_cod_response])
         head :no_content
       else
         puts "Signature: #{signature}"
-        puts "Received signature: #{params[:x_signature]}"
+        puts "Received signature: #{response[:x_signature]}"
         head :unprocessable_entity
       end
 
-
-      #mollie.update_payment_status payment
       # TODO check status and update based on payloads
-
-      EpaycoLogger.debug("Redirect URL visited for order #{params[:order_number]}")
-
-      order = order.reload
 
       # Order is paid for or authorized (e.g. Klarna Pay Later)
       redirect_to order.paid? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
@@ -66,14 +61,13 @@ module Spree
 
     private
 
-    def result
+    def result()
       url = "https://secure.epayco.co/validation/v1/reference/#{params[:ref_payco]}"
       response = HTTParty.get(url)
 
       parsed = JSON.parse(response.body)
       if parsed['success']
-        @data = parsed['data']
-        @charge = order
+        return parsed['data']
       else
         @error = 'No se pudo consultar la información'
       end
