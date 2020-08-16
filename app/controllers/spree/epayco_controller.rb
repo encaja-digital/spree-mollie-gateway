@@ -30,8 +30,8 @@ module Spree
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
 
       response = result()
-      signature(response, mollie)
-      if signature(response, mollie) == response[:x_signature]
+      signature = signature(response, mollie)
+      if signature == response[:x_signature]
         update_status(order, response[:x_cod_response])
         head :no_content
       else
@@ -67,7 +67,7 @@ module Spree
 
       parsed = JSON.parse(response.body)
       if parsed['success']
-        return parsed['data']
+        return parsed['data'].with_indifferent_access
       else
         @error = 'No se pudo consultar la información'
       end
