@@ -30,8 +30,8 @@ module Spree
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
 
       response = result()
-      signature
-      if signature == response[:x_signature]
+      signature()
+      if signature() == response[:x_signature]
         update_status(order, response[:x_cod_response])
         head :no_content
       else
@@ -73,8 +73,8 @@ module Spree
       end
     end
 
-    def signature
-      msg = "#{params[:x_cust_id_cliente]}^#{Rails.application.credentials.epayco[:secret]}^#{params[:x_ref_payco]}^#{params[:x_transaction_id]}^#{params[:x_amount]}^#{params[:x_currency_code]}"
+    def signature(response)
+      msg = "#{response[:x_cust_id_cliente]}^#{Rails.application.credentials.epayco[:secret]}^#{response[:x_ref_payco]}^#{response[:x_transaction_id]}^#{response[:x_amount]}^#{response[:x_currency_code]}"
       Digest::SHA256.hexdigest(msg)
     end
 
