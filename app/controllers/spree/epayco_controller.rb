@@ -30,8 +30,8 @@ module Spree
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
 
       response = result()
-      signature()
-      if signature() == response[:x_signature]
+      signature(response)
+      if signature(response) == response[:x_signature]
         update_status(order, response[:x_cod_response])
         head :no_content
       else
