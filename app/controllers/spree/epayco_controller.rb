@@ -44,7 +44,7 @@ module Spree
       # end
 
       # Order is paid for or authorized (e.g. Klarna Pay Later)
-      redirect_to payment.paid? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
+      redirect_to order.paid_or_authorized? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
     end
 
     def update_status(payment, response)
