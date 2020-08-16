@@ -35,7 +35,7 @@ module Spree
       update_status(payment, response)
 
       if signature == response[:x_signature]
-        update_status(order, response)
+        update_status(payment, response)
         head :no_content
       else
         puts "Signature: #{signature}"
@@ -60,15 +60,17 @@ module Spree
       head :ok
     end
 
-    def update_status(charge, response)
+    def update_status(payment, response)
       byebug
-      #status = response[:x_cod_response]
-      if response[:x_cod_response] == 1
-        charge.paid!
-      elsif response[:x_cod_response] == 2 || response[:x_cod_response] == 4
-        charge.update!(status: :rejected, error_message: response[:x_response_reason_text])
-      elsif response[:x_cod_response] == 3
-        charge.pending!
+      status = response[:x_cod_response]
+      if status == 1
+        #payment.paid!
+        payment.source.update(status: :paid)
+        payment.update(state: :paid)
+      elsif status == 2 || status == 4
+        payment.update!(status: :rejected, error_message: response[:x_response_reason_text])
+      elsif status == 3
+        payment.pending!
       else
         head :unprocessable_entity
         return
