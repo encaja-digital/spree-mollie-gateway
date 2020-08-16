@@ -34,14 +34,14 @@ module Spree
       ## TODO: check signature before update_status
       update_status(payment, response)
 
-      if signature == response[:x_signature]
-        update_status(payment, response)
-        head :no_content
-      else
-        puts "Signature: #{signature}"
-        puts "Received signature: #{response[:x_signature]}"
-        head :unprocessable_entity
-      end
+      # if signature == response[:x_signature]
+      #   update_status(payment, response)
+      #   head :no_content
+      # else
+      #   puts "Signature: #{signature}"
+      #   puts "Received signature: #{response[:x_signature]}"
+      #   head :unprocessable_entity
+      # end
 
       # Order is paid for or authorized (e.g. Klarna Pay Later)
       redirect_to order.paid? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
