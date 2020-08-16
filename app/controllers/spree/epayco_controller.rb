@@ -32,10 +32,10 @@ module Spree
       response = result()
       signature = signature(response, mollie)
       ## TODO: check signature before update_status
-      update_status(payment, response[:x_cod_response])
+      update_status(payment, response)
 
       if signature == response[:x_signature]
-        update_status(order, response[:x_cod_response])
+        update_status(order, response)
         head :no_content
       else
         puts "Signature: #{signature}"
