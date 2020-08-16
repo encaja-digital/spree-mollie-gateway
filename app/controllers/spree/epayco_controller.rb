@@ -29,18 +29,15 @@ module Spree
       order = payment.order
       mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
 
-      url = "https://secure.epayco.co/validation/v1/reference/#{params[:ref_payco]}"
-      response = HTTParty.get(url)
-      parsed = JSON.parse(response.body)
-
-      if parsed['success']
-        @data = parsed['data']
-        order = order.reload
+      result
+      if signature == params[:x_signature]
+        update_status(order, params[:x_cod_response])
+        head :no_content
       else
-        @error = 'No se pudo consultar la información'
+        puts "Signature: #{signature}"
+        puts "Received signature: #{params[:x_signature]}"
+        head :unprocessable_entity
       end
-
-
 
 
       #mollie.update_payment_status payment
@@ -76,9 +73,27 @@ module Spree
       parsed = JSON.parse(response.body)
       if parsed['success']
         @data = parsed['data']
-        @charge = TransactionLog.where(uid: @data['x_id_invoice']).take
+        @charge = order
       else
         @error = 'No se pudo consultar la información'
+      end
+    end
+
+    def signature
+      msg = "#{params[:x_cust_id_cliente]}^#{Rails.application.credentials.epayco[:secret]}^#{params[:x_ref_payco]}^#{params[:x_transaction_id]}^#{params[:x_amount]}^#{params[:x_currency_code]}"
+      Digest::SHA256.hexdigest(msg)
+    end
+
+    def update_status(charge, status)
+      if status == "1"
+        charge.paid!
+      elsif status == "2" || status == "4"
+        charge.update!(status: :rejected, error_message: params[:x_response_reason_text])
+      elsif status == "3"
+        charge.pending!
+      else
+        head :unprocessable_entity
+        return
       end
     end
 
