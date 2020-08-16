@@ -44,33 +44,21 @@ module Spree
       end
 
       # Order is paid for or authorized (e.g. Klarna Pay Later)
-      #redirect_to order.paid? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
-    end
-
-    # Mollie might send us information about a transaction through the webhook.
-    # We should update the payment state accordingly.
-    def update_payment_status
-      byebug
-      EpaycoLogger.debug("Webhook called for Mollie order #{params[:id]}")
-
-      payment = Spree::MolliePaymentSource.find_by_payment_id(params[:id]).payments.first
-      mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
-      mollie.update_payment_status payment
-
-      head :ok
+      redirect_to order.paid? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
     end
 
     def update_status(payment, response)
       byebug
       status = response[:x_cod_response]
       if status == 1
-        #payment.paid!
         payment.source.update(status: :paid)
         payment.update(state: :paid)
       elsif status == 2 || status == 4
-        payment.update!(status: :rejected, error_message: response[:x_response_reason_text])
+        payment.source.update(status: :rejected, error_message: response[:x_response_reason_text])
+        payment.update(state: :rejected)
       elsif status == 3
-        payment.pending!
+        payment.source.update(status: :pending)
+        payment.update(state: :pending)
       else
         head :unprocessable_entity
         return
