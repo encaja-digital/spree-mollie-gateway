@@ -13,7 +13,7 @@ module Spree
       @name = order.billing_address.full_name
       @billing_address = parse_address(order.billing_address)
       @base_url_webhook = gateway.get_preference(:hostname)
-      @tx_id = params[:payment_number]
+      @tx_id = params[:payment_number] #or payment.source.payment_id
       @tax_amount = order.additional_tax_total
       @tax_base = order.item_total
       @items = order.item_count

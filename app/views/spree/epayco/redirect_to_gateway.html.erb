@@ -31,7 +31,7 @@
   epaycoPack(
     <%= Rails.env.production? ? false : true %>,
     '<%= @api_key %>',
-    '<%= SecureRandom.hex(5) %>',
+    '<%= @tx_id %>',
     '<%= @price %>',
     '<%= @base_url_webhook %>',
     '<%= @email %>',
