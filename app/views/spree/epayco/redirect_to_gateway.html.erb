@@ -17,8 +17,8 @@
       country: "co",
       lang: "es",
       external: "true",
-      response: base_url + "/epayco/validate_payment/" + tx_uid,
-      confirmation: base_url + "/epayco/update_payment_status/" + tx_uid,
+      response: base_url + "/epayco/payment_response/" + tx_uid,
+      confirmation: base_url + "/epayco/payment_confirmation/" + tx_uid,
       email_billing: mail,
       name_billing: name,
       address_billing: address
@@ -31,7 +31,7 @@
   epaycoPack(
     <%= Rails.env.production? ? false : true %>,
     '<%= @api_key %>',
-    '<%= SecureRandom.hex(5) %>',
+    '<%= @tx_id %>',
     '<%= @price %>',
     '<%= @base_url_webhook %>',
     '<%= @email %>',
