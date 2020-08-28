@@ -29,11 +29,11 @@ module Spree
             order_number: order_number
           },
           orderNumber: order_number,
-          redirectUrl: spree_routes.epayco_validate_payment_epayco_url(
+          redirectUrl: spree_routes.epayco_payment_response_epayco_url(
             order_number: order_number,
             host: @gateway_preferences[:hostname]
           ),
-          webhookUrl: spree_routes.epayco_update_payment_status_epayco_url(
+          webhookUrl: spree_routes.epayco_payment_confirmation_epayco_url(
             order_number: order_number,
             host: @gateway_preferences[:hostname]
           ),
