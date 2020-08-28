@@ -23,6 +23,43 @@ module Spree
 
     # When the user is redirected from Mollie back to the shop, we can check the
     # mollie transaction status and set the Spree order state accordingly.
+    def payment_result
+      byebug
+      url = "https://secure.epayco.co/validation/v1/reference/#{params[:ref_payco]}"
+      response = HTTParty.get(url)
+
+      parsed = JSON.parse(response.body)
+      if parsed['success']
+        return parsed['data'].with_indifferent_access
+      else
+        @error = 'No se pudo consultar la información'
+      end
+    end
+
+    def payment_confirmation
+      byebug
+      url = "https://secure.epayco.co/validation/v1/reference/#{params[:ref_payco]}"
+      response = HTTParty.get(url)
+
+      payment = Spree::Payment.find_by_number params[:payment_number]
+      order = payment.order
+      mollie = Spree::PaymentMethod.find_by_type 'Spree::Gateway::MollieGateway'
+
+      update_status(payment, response)
+
+      # if signature == response[:x_signature]
+      #   update_status(payment, response)
+      #   head :no_content
+      # else
+      #   puts "Signature: #{signature}"
+      #   puts "Received signature: #{response[:x_signature]}"
+      #   head :unprocessable_entity
+      # end
+
+      # Order is paid for or authorized (e.g. Klarna Pay Later)
+      redirect_to order.paid_or_authorized? || payment.pending? ? order_path(order) : checkout_state_path(:payment)    
+    end
+
     def validate_payment
       byebug
       payment = Spree::Payment.find_by_number params[:payment_number]
