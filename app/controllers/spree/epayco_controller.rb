@@ -30,7 +30,8 @@ module Spree
 
       parsed = JSON.parse(response.body)
       if parsed['success']
-        return parsed['data'].with_indifferent_access
+        @data = parsed['data'].with_indifferent_access
+        @charge = Spree::Payment.find_by_number @data['x_id_invoice']
       else
         @error = 'No se pudo consultar la información'
       end
@@ -57,7 +58,7 @@ module Spree
       # end
 
       # Order is paid for or authorized (e.g. Klarna Pay Later)
-      redirect_to order.paid_or_authorized? || payment.pending? ? order_path(order) : checkout_state_path(:payment)    
+      redirect_to order.paid_or_authorized? || payment.pending? ? order_path(order) : checkout_state_path(:payment)
     end
 
     def validate_payment
