@@ -1,0 +1,60 @@
+<div class="nav-menu2 fixed-top">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <nav class="navbar navbar-dark navbar-expand-lg">
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+        </nav>
+      </div>
+    </div>
+  </div>
+</div>
+
+<section id="contact" class="contact-page-area section-gap">
+  <div class="container section">
+      <div class="container mt-5">
+        <div class="row justify-content-center">
+            <% unless @error %>
+              <div class="section-title mt-5">
+                <h2>COMPRA SATISFACTORIA</h2>
+                <h4>¡Te damos la bienvenida al mundo de las ventas por internet! </h4>
+              </div>
+              <div class="col-6">
+                <table class="table table-bordered mt-3">
+                  <tr>
+                    <th>Referencia</th>
+                    <td><%= @charge.source.payment_id %></td>
+                  </tr>
+                  <tr>
+                    <th>Estado</th>
+                    <td><%= @data["x_response"] %></td>
+                  </tr>
+                  <tr>
+                    <th>Fecha</th>
+                    <td><%= @data["x_transaction_date"] %></td>
+                  </tr>
+                  <tr>
+                    <th>Valor</th>
+                    <td><%= @charge.amount %></td>
+                  </tr>
+                  <tr>
+                    <th>Banco</th>
+                    <td><%= @data["x_bank_name"] %></td>
+                  </tr>
+                  <tr>
+                    <th>Mensaje</th>
+                    <td><%= @data["x_response_reason_text"] %></td>
+                  </tr>
+                </table>
+              </div>
+          <% else %>
+          <div class="alert alert-danger mt-4" role="alert">
+            <h4>No se encontró la información solicitada. Comunícate con nuestro equipo para más información.</h4>
+          </div>
+          <% end %>
+        </div>
+      </div>
+  </div>
+</section>
